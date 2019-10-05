@@ -26,6 +26,7 @@ mongoDbConnection = MongoDbConnection(connectionString)
 
 deleteAllObjects = mongoDbConnection.findAll()
 for doc in deleteAllObjects:
+    print("Location for delete: " + doc['user']['location'])
     mongoDbConnection.deleteOne(doc)
 print("All documents on db nosql deleted succeed")
 
