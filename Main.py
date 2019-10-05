@@ -47,6 +47,6 @@ for tweet in twitters:
     print(f' Usuário: {tweet.user} - Tweet: {tweet.text}')
     mongoDbConnection.insertOne(tweet._json)
 
-print("Twitts inserted succeed")
+print("Tweets inserted succeed")
 
 
