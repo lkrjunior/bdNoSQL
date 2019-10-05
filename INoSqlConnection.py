@@ -7,6 +7,10 @@ class INoSqlConnection:
         raise NotImplementedError
 
     @abstractmethod
+    def findAll(self):
+        raise NotImplementedError
+
+    @abstractmethod
     def insertOne(self, insertOne):
         raise NotImplementedError
 

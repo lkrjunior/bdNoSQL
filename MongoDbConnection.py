@@ -1,5 +1,4 @@
 import pymongo
-
 from INoSqlConnection import INoSqlConnection
 
 
@@ -10,12 +9,15 @@ class MongoDbConnection(INoSqlConnection):
 
     def findOne(self, findOne):
         findObject = self.db.nosql.find_one(findOne)
-        print("findOne: " + str(findObject))
+        return findObject
+
+    def findAll(self):
+        findObjects = self.db.nosql.find()
+        return findObjects
 
     def insertOne(self, insertOne):
         id = self.db.nosql.insert_one(insertOne)
-        print("insertOne: Id=" + str(id.inserted_id) + " inserted")
+        return id.inserted_id
 
     def deleteOne(self, deleteOne):
         self.db.nosql.delete_one(deleteOne)
-        print("deleteOne: " + str(deleteOne) + " deleted")
