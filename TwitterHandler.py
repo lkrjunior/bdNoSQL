@@ -4,10 +4,10 @@ from ITwitterHandler import ITwitterHandler
 
 class TwitterHandler(ITwitterHandler):
     def __init__(self, consumerKey, consumerSecret, accessToken, accessTokenSecret):
-        autenticacao = tweepy.OAuthHandler(consumerKey, consumerSecret)
-        autenticacao.set_access_token(accessToken, accessTokenSecret)
-        self.twitter = tweepy.API(autenticacao)
+        authentication = tweepy.OAuthHandler(consumerKey, consumerSecret)
+        authentication.set_access_token(accessToken, accessTokenSecret)
+        self.twitter = tweepy.API(authentication)
 
     def search(self, query):
-        resultados = self.twitter.search(q=query)
-        return resultados
+        resultQuery = self.twitter.search(q=query)
+        return resultQuery

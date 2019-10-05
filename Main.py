@@ -45,7 +45,7 @@ twitter = TwitterHandler(consumerKey, consumerSecret, accessToken, accessTokenSe
 query = 'BigDataAnalytics'
 twitters = twitter.search(query)
 for tweet in twitters:
-    #print(f' Usuário: {tweet.user} - Tweet: {tweet.text}')
+    #print(f' User: {tweet.user} - Tweet: {tweet.text}')
     locationFromTweet = tweet._json['user']['location']
     if locationFromTweet.strip():
         print("Location: " + tweet._json['user']['location'])
