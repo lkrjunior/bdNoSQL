@@ -4,8 +4,8 @@ from INoSqlConnection import INoSqlConnection
 
 class MongoDbConnection(INoSqlConnection):
     def __init__(self, connectionString):
-        client = pymongo.MongoClient(connectionString)
-        self.db = client.nosql
+        self.client = pymongo.MongoClient(connectionString)
+        self.db = self.client.nosql
 
     def findOne(self, findOne):
         findObject = self.db.nosql.find_one(findOne)
@@ -25,3 +25,6 @@ class MongoDbConnection(INoSqlConnection):
 
     def deleteOne(self, deleteOne):
         self.db.nosql.delete_one(deleteOne)
+
+    def close(self):
+        self.client.close()

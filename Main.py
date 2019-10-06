@@ -1,5 +1,6 @@
 import configparser
 
+from Neo4jHandler import Neo4jHandler
 from TwitterHandler import TwitterHandler
 from MongoDbConnection import MongoDbConnection
 
@@ -66,4 +67,16 @@ for tweet in twitters:
 
 print("Tweets inserted succeed")
 
+mongoDbConnection.close()
 
+
+section = 'Neo4jSection'
+connectionStringNeo4j = config.get(section, 'neo4j.connectionString')
+userNeo4j = config.get(section, 'neo4j.user')
+passwordNeo4j = config.get(section, 'neo4j.password')
+
+neo4j = Neo4jHandler(connectionStringNeo4j, userNeo4j, passwordNeo4j)
+neo4j.createMessage("message to test")
+print("Neo4j inserted succeed")
+
+neo4j.close()

@@ -21,3 +21,7 @@ class INoSqlConnection:
     @abstractmethod
     def deleteOne(self, deleteOne):
         raise NotImplementedError
+
+    @abstractmethod
+    def close(self):
+        raise NotImplementedError
