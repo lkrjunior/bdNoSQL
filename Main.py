@@ -26,8 +26,9 @@ mongoDbConnection = MongoDbConnection(connectionString)
 
 deleteAllObjects = mongoDbConnection.findAll()
 for doc in deleteAllObjects:
-    print("Location for delete: " + doc['user']['location'])
-    mongoDbConnection.deleteOne(doc)
+    if 'user' in doc:
+        print("Location for delete: " + doc['user']['location'])
+        mongoDbConnection.deleteOne(doc)
 print("All documents on db nosql deleted succeed")
 
 insertOne = {"_id": 1, "name": "nosql", "teste": "1"}
@@ -40,6 +41,18 @@ print("findOne: " + str(result))
 
 mongoDbConnection.deleteOne(objectId)
 print("deleteOne: " + str(objectId) + " deleted")
+
+insertMany = [
+    {"_id": 1, "name": "nosql1", "teste": "1"},
+    {"_id": 2, "name": "nosql2", "teste": "2"}
+]
+ids = mongoDbConnection.insertMany(insertMany)
+print("insertMany: _ids=" + str(ids) + " inserted")
+
+for idToDelete in ids:
+    deleteOne = {"_id": idToDelete}
+    mongoDbConnection.deleteOne(deleteOne)
+print("deleteMany: " + str(ids) + " deleted")
 
 twitter = TwitterHandler(consumerKey, consumerSecret, accessToken, accessTokenSecret)
 query = 'BigDataAnalytics'

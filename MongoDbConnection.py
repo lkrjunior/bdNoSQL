@@ -19,5 +19,9 @@ class MongoDbConnection(INoSqlConnection):
         id = self.db.nosql.insert_one(insertOne)
         return id.inserted_id
 
+    def insertMany(self, insertMany):
+        ids = self.db.nosql.insert_many(insertMany)
+        return ids.inserted_ids
+
     def deleteOne(self, deleteOne):
         self.db.nosql.delete_one(deleteOne)

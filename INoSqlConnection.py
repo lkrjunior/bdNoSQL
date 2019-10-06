@@ -15,5 +15,9 @@ class INoSqlConnection:
         raise NotImplementedError
 
     @abstractmethod
+    def insertMany(self, insertMany):
+        raise NotImplementedError
+
+    @abstractmethod
     def deleteOne(self, deleteOne):
         raise NotImplementedError
