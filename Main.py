@@ -27,8 +27,8 @@ mongoDbConnection = MongoDbConnection(connectionString)
 
 deleteAllObjects = mongoDbConnection.findAll()
 for doc in deleteAllObjects:
-    if 'user' in doc:
-        print("Location for delete: " + doc['user']['location'])
+    #if 'user' in doc or 'tweet' in doc:
+        #print("Location for delete: " + doc['user']['location'])
         mongoDbConnection.deleteOne(doc)
 print("All documents on db nosql deleted succeed")
 
@@ -63,7 +63,15 @@ for tweet in twitters:
     locationFromTweet = tweet._json['user']['location']
     if locationFromTweet.strip():
         print("Location: " + tweet._json['user']['location'])
-        mongoDbConnection.insertOne(tweet._json)
+        tweetUser = tweet._json['user']
+        tweetInsertion = {
+            "idUser": tweetUser['id'], 
+            "name": tweetUser['name'], 
+            "screenName": tweetUser['screen_name'], 
+            "location": tweetUser['location'], 
+            "tweet": tweetUser['description']
+            }
+        mongoDbConnection.insertOne(tweetInsertion)
 
 print("Tweets inserted succeed")
 
