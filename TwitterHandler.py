@@ -11,3 +11,6 @@ class TwitterHandler(ITwitterHandler):
     def search(self, query):
         resultQuery = self.twitter.search(q=query)
         return resultQuery
+
+    def close(self):
+        self.twitter = None
