@@ -51,6 +51,7 @@ numberItems = 5
 tweetsSearch = twitter.searchItems(resultType, query, language, geocode, since, until, numberItems)
 for tweet in tweetsSearch:
     if tweet:
+        #TO DO COMPREHEND
         #KEY_NOT_WORKING comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
         #KEY_NOT_WORKING sentiment = comprehendAnalysis['Sentiment']
         sentiment = 'Neutral'
