@@ -13,5 +13,4 @@ class ComprehendHandler:
         return sentiment
 
     def close(self):
-        self.boto3.close
-
+        self.client = None

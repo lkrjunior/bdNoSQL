@@ -78,6 +78,7 @@ for tweet in twitters:
             }
         mongoDbConnection.insertOne(tweetInsertion)
 
+twitter.close()
 print("Tweets inserted succeed")
 
 mongoDbConnection.close()
@@ -101,4 +102,6 @@ secretAccessKeyComprehend = config.get(section, 'comprehend.secretAccessKey')
 
 comprehendHandler = ComprehendHandler(accessKeyComprehend, secretAccessKeyComprehend)
 comprehendSentiment = comprehendHandler.detectSentiment('twitter é tri')
-print (comprehendSentiment)
+print(comprehendSentiment)
+print(comprehendSentiment['Sentiment'])
+comprehendHandler.close()
