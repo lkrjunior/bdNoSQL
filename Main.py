@@ -1,8 +1,13 @@
+#pip3 freeze
+#criar arquivo requirements.txt com as bilbiotecas 
+#pip3 install -r requirements.txt
+
 import configparser
 
 from Neo4jHandler import Neo4jHandler
 from TwitterHandler import TwitterHandler
 from MongoDbConnection import MongoDbConnection
+from ComprehendHandler import ComprehendHandler
 
 config = configparser.RawConfigParser()
 config.read('config.properties')
@@ -88,3 +93,12 @@ neo4j.createMessage("message to test")
 print("Neo4j inserted succeed")
 
 neo4j.close()
+
+
+section = 'ComprehendSection'
+accessKeyComprehend = config.get(section, 'comprehend.accessKey')
+secretAccessKeyComprehend = config.get(section, 'comprehend.secretAccessKey')
+
+comprehendHandler = ComprehendHandler(accessKeyComprehend, secretAccessKeyComprehend)
+comprehendSentiment = comprehendHandler.detectSentiment('twitter é tri')
+print (comprehendSentiment)
