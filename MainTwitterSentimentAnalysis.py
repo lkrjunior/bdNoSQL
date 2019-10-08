@@ -66,6 +66,9 @@ for tweet in tweetsSearch:
         listTweets.append(tweetInsertion)
         print("Tweet to send MongoDB: " + str(tweetInsertion))
 
+for item in listTweets:
+    neo4j.createTwitterAnalysis(item['sentimental'], item['location'])
+
 if len(listTweets) > 0:
     mongoDbConnection.insertMany(listTweets)
     print('Sentimental Analysis on Twiteer successfuly!')
