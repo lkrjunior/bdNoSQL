@@ -63,6 +63,18 @@ for tweet in twitters:
 mongoDbConnection.insertMany(listTweets)
 print('Sentimental Analysis on Twiteer successfuly!')
 
+
+resultType = "recent"
+query = "internacional" + " -filter:retweets"
+language = "pt"
+geocode = "-30.0277,-51.2287,5km" #Latitude,Longitude,Raio
+since = "2019-10-01"
+until = "2019-10-09"
+numberItems = 5
+tweetsSearch = twitter.searchItems(resultType, query, language, geocode, since, until, numberItems)
+tweetsInfo = [[tweet.id_str,tweet.created_at,tweet.user.screen_name, tweet.user.location, tweet.text] for tweet in tweetsSearch]
+print(tweetsInfo)
+
 mongoDbConnection.close()
 twitter.close()
 neo4j.close()
