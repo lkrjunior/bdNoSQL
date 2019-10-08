@@ -37,43 +37,41 @@ for doc in deleteAllObjects:
 print("MongoDB clean successfuly")
 
 
-query = 'BigDataAnalytics'
+
 listTweets = []
-
-twitters = twitter.search(query)
-for tweet in twitters:
-    locationFromTweet = tweet._json['user']['location']
-    if locationFromTweet.strip():
-
-        tweetUser = tweet._json['user']
-
-        comprehendAnalysis = comprehendHandler.detectSentiment(tweetUser['description'])
-
-        tweetInsertion = {
-            "idUser": tweetUser['id'],
-            "name": tweetUser['name'],
-            "screenName": tweetUser['screen_name'],
-            "location": tweetUser['location'],
-            "tweet": tweetUser['description'],
-            "sentimental": comprehendAnalysis['Sentiment']
-            }
-        listTweets.append(tweetInsertion)
-        print("Tweet to send MongoDB: " + str(tweetInsertion))
-
-mongoDbConnection.insertMany(listTweets)
-print('Sentimental Analysis on Twiteer successfuly!')
-
 
 resultType = "recent"
 query = "internacional" + " -filter:retweets"
 language = "pt"
-geocode = "-30.0277,-51.2287,5km" #Latitude,Longitude,Raio
+geocode = "-30.0277,-51.2287,5km"
 since = "2019-10-01"
 until = "2019-10-09"
 numberItems = 5
+
 tweetsSearch = twitter.searchItems(resultType, query, language, geocode, since, until, numberItems)
-tweetsInfo = [[tweet.id_str,tweet.created_at,tweet.user.screen_name, tweet.user.location, tweet.text] for tweet in tweetsSearch]
-print(tweetsInfo)
+for tweet in tweetsSearch:
+    if tweet:
+        #TO DO COMPREHEND
+        #KEY_NOT_WORKING comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
+        #KEY_NOT_WORKING sentiment = comprehendAnalysis['Sentiment']
+        sentiment = 'Neutral'
+        tweetInsertion = {
+            "idUser": tweet.id_str,
+            "createAt": tweet.created_at,
+            "screenName": tweet.user.screen_name,
+            "location": tweet.user.location,
+            "tweet": tweet.text,
+            "sentimental": sentiment
+        }
+        listTweets.append(tweetInsertion)
+        print("Tweet to send MongoDB: " + str(tweetInsertion))
+
+for item in listTweets:
+    neo4j.createTwitterAnalysis(item['sentimental'], item['location'])
+
+if len(listTweets) > 0:
+    mongoDbConnection.insertMany(listTweets)
+    print('Sentimental Analysis on Twiteer successfuly!')
 
 mongoDbConnection.close()
 twitter.close()

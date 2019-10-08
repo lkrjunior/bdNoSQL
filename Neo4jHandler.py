@@ -10,14 +10,26 @@ class Neo4jHandler(INeo4jHandler):
 
     def createMessage(self, message):
         with self._driver.session() as session:
-            messageWrite = session.write_transaction(self._create_and_return, message)
+            messageWrite = session.write_transaction(self._create_and_return_message, message)
             print(messageWrite)
 
     @staticmethod
-    def _create_and_return(tx, message):
+    def _create_and_return_message(tx, message):
         result = tx.run("CREATE (a:Test) "
                         "SET a.message = $message "
                         "RETURN a.message + ', from node ' + id(a)", message=message)
+        return result.single()[0]
+
+    def createTwitterAnalysis(self, sentimental, location):
+        with self._driver.session() as session:
+            messageWrite = session.write_transaction(self._create_and_return_twitter_analysis, sentimental, location)
+            print(messageWrite)
+
+    @staticmethod
+    def _create_and_return_twitter_analysis(tx, sentimental, location):
+        result = tx.run("CREATE (a:" + sentimental + ") "
+                        "SET a.message = $message "
+                        "RETURN a.message + ', from node ' + id(a)", message=location)
         return result.single()[0]
 
     def close(self):
