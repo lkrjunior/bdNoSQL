@@ -31,6 +31,37 @@ neo4j = Neo4jHandler(connectionStringNeo4j, userNeo4j, passwordNeo4j)
 comprehendHandler = ComprehendHandler(accessKeyComprehend, secretAccessKeyComprehend)
 
 
+deleteAllObjects = mongoDbConnection.findAll()
+for doc in deleteAllObjects:
+    mongoDbConnection.deleteOne(doc)
+print("MongoDB clean successfuly")
+
+
+query = 'BigDataAnalytics'
+listTweets = []
+
+twitters = twitter.search(query)
+for tweet in twitters:
+    locationFromTweet = tweet._json['user']['location']
+    if locationFromTweet.strip():
+
+        tweetUser = tweet._json['user']
+
+        comprehendAnalysis = comprehendHandler.detectSentiment(tweetUser['description'])
+
+        tweetInsertion = {
+            "idUser": tweetUser['id'],
+            "name": tweetUser['name'],
+            "screenName": tweetUser['screen_name'],
+            "location": tweetUser['location'],
+            "tweet": tweetUser['description'],
+            "sentimental": comprehendAnalysis['Sentiment']
+            }
+        listTweets.append(tweetInsertion)
+        print("Tweet to send MongoDB: " + str(tweetInsertion))
+
+mongoDbConnection.insertMany(listTweets)
+print('Sentimental Analysis on Twiteer successfuly!')
 
 mongoDbConnection.close()
 twitter.close()
