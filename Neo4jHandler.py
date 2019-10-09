@@ -35,3 +35,26 @@ class Neo4jHandler(INeo4jHandler):
     def close(self):
         self._driver.close()
 
+'''
+Scripts for example
+
+CREATE (RS:Estado {title:'Rio Grande do Sul', estado:'Rio Grande do Sul'})
+CREATE (PortoAlegre:Cidade {title:'Porto Alegre', estado:'Rio Grande do Sul'})
+CREATE (Negativo:Sentimento {title:'Negativo'})
+CREATE (Positivo:Sentimento {title:'Positivo'})
+CREATE (Neutro:Sentimento {title:'Neutro'})
+CREATE
+  (Negativo)-[:POSSUI {percentual:['35%']}]->(PortoAlegre),
+  (Positivo)-[:POSSUI {percentual:['25%']}]->(PortoAlegre),
+  (Neutro)-[:POSSUI {percentual:['40%']}]->(PortoAlegre)
+  
+CREATE (Alvorada:Cidade {title:'Alvorada', estado:'Rio Grande do Sul'})
+CREATE
+  (Negativo)-[:POSSUI {percentual:['35%']}]->(Alvorada),
+  (Positivo)-[:POSSUI {percentual:['35%']}]->(Alvorada),
+  (Neutro)-[:POSSUI {percentual:['30%']}]->(Alvorada)
+
+CREATE
+  (PortoAlegre)-[:ESTA {tipo:['capital']}]->(RS),
+  (Alvorada)-[:ESTA {tipo:['cidade']}]->(RS)
+'''
