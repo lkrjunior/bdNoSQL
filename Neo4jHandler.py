@@ -20,16 +20,16 @@ class Neo4jHandler(INeo4jHandler):
                         "RETURN a.message + ', from node ' + id(a)", message=message)
         return result.single()[0]
 
-    def createTwitterAnalysis(self, sentimental, location):
+    def createTwitterAnalysis(self, location, sentimental):
         with self._driver.session() as session:
-            messageWrite = session.write_transaction(self._create_and_return_twitter_analysis, sentimental, location)
+            messageWrite = session.write_transaction(self._create_and_return_twitter_analysis, location, sentimental)
             print(messageWrite)
 
     @staticmethod
-    def _create_and_return_twitter_analysis(tx, sentimental, location):
-        result = tx.run("CREATE (a:" + sentimental + ") "
+    def _create_and_return_twitter_analysis(tx, location, sentimental):
+        result = tx.run("CREATE (a:" + location + ") "
                         "SET a.message = $message "
-                        "RETURN a.message + ', from node ' + id(a)", message=location)
+                        "RETURN a.message + ', from node ' + id(a)", message=sentimental)
         return result.single()[0]
 
     def close(self):
