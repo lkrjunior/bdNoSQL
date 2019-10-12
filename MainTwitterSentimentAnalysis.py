@@ -54,7 +54,7 @@ language = "pt"
 geocode = "-30.0277,-51.2287,5km"
 since = "2019-01-01"
 until = "2019-12-31"
-numberItems = 20
+numberItems = 50
 
 tweetsSearch = twitter.searchItems(resultType, query, language, since, until, numberItems)
 for tweet in tweetsSearch:

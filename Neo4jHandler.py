@@ -1,3 +1,5 @@
+import re
+
 from neo4j import GraphDatabase
 
 from INeo4jHandler import INeo4jHandler
@@ -89,11 +91,8 @@ class Neo4jHandler(INeo4jHandler):
                         session.write_transaction(self._execute_command, command)
 
     def __onlyCharacters(self, input):
-        output = ''
-        for character in input:
-            if character.isalpha():
-                output += character
-        return output
+        regex = re.compile('[^a-zA-Z]')
+        return regex.sub('', input)
 
     def close(self):
         self._driver.close()

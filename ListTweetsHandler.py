@@ -1,3 +1,6 @@
+import re
+
+
 class ListTweetsHandler:
     def analyseDataSentimental(self, listTweets):
         listRelations = []
@@ -30,8 +33,5 @@ class ListTweetsHandler:
         return percentage
 
     def onlyCharacters(self, input):
-        output = ''
-        for character in input:
-            if character.isalpha():
-                output += character
-        return output
+        regex = re.compile('[^a-zA-Z]')
+        return regex.sub('', input)
