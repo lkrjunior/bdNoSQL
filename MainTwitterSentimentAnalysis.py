@@ -69,6 +69,7 @@ for tweet in tweetsSearch:
             "tweet": tweet.text,
             "sentimental": sentiment
         }
+        tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
         if tweetInsertion['location'].strip():
             tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
             listTweets.append(tweetSentimental)
@@ -79,6 +80,8 @@ listRelationsPercentage = listTweetsHandler.calculatePercentage(listRelations)
 
 neo4j.clean()
 neo4j.insertSentimentals(listSentimentals)
+neo4j.insertLocations(listRelationsPercentage)
+neo4j.insertRelations(listRelationsPercentage)
 print("Neo4J inserted successfuly!")
 
 

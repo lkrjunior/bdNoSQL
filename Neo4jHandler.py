@@ -35,6 +35,7 @@ class Neo4jHandler(INeo4jHandler):
     @staticmethod
     def _execute_command(tx, command):
         tx.run(command)
+        print(command)
 
     @staticmethod
     def _execute_command_return_first(tx, command):
@@ -60,12 +61,39 @@ class Neo4jHandler(INeo4jHandler):
             with self._driver.session() as session:
                 session.write_transaction(self._execute_command, command)
 
-    #def insertTweets(self, listTweets):
-        #for item in listTweets:
-            #neo4j.createTwitterAnalysis(item['sentimental'], item['location'])
+    def insertLocations(self, listLocationsSentimentals):
+        for item in listLocationsSentimentals:
+            location = self.__onlyCharacters(item['location'])
+            command = "CREATE (" + location + ":City {title:'" + location + "', country:'Brasil'})"
+            with self._driver.session() as session:
+                session.write_transaction(self._execute_command, command)
 
-    #def insertRelations(self):
+    def insertRelations(self, listLocationsSentimentals):
+        for item in listLocationsSentimentals:
+            location = self.__onlyCharacters(item['location'])
+            i = 0
+            for sentimentalLoop in item['sentimentals']:
+                sentimentalName = sentimentalLoop
+                sentimentalValue = int(item['sentimentals'][sentimentalName])
+                if sentimentalValue > 0:
+                    #command = "CREATE (" + sentimentalName + ")-[:HAS {percentage:['" + str(sentimentalValue) + "%']}]->(" + location + ")"
+                    command = "MATCH(a:Sentimental),(b:City) "\
+                              "WHERE a.title = '" + sentimentalName + "' "\
+                              "AND b.title = '" + location + "' "\
+                              "CREATE(a)-[:HAS {percentage:['" + str(sentimentalValue) + "%']}]->(b)"
+                    command = "MATCH(a:Sentimental),(b:City) " \
+                              "WHERE a.title = '" + sentimentalName + "' " \
+                              "AND b.title = '" + location + "' " \
+                              "CREATE(b)-[:HAS {percentage:['" + str(sentimentalValue) + "%']}]->(a)"
+                    with self._driver.session() as session:
+                        session.write_transaction(self._execute_command, command)
 
+    def __onlyCharacters(self, input):
+        output = ''
+        for character in input:
+            if character.isalpha():
+                output += character
+        return output
 
     def close(self):
         self._driver.close()

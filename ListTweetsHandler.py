@@ -28,3 +28,10 @@ class ListTweetsHandler:
             item['sentimentals']['MIXED'] = (item['sentimentals']['MIXED'] * 100) / sumValue
             percentage.append(item)
         return percentage
+
+    def onlyCharacters(self, input):
+        output = ''
+        for character in input:
+            if character.isalpha():
+                output += character
+        return output
