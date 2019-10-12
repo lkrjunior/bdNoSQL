@@ -32,6 +32,41 @@ class Neo4jHandler(INeo4jHandler):
                         "RETURN a.message + ', from node ' + id(a)", message=sentimental)
         return result.single()[0]
 
+    @staticmethod
+    def _execute_command(tx, command):
+        tx.run(command)
+
+    @staticmethod
+    def _execute_command_return_first(tx, command):
+        result = tx.run(command)
+        return result.single()[0]
+
+    @staticmethod
+    def _execute_command_return_list(tx, command):
+        result = tx.run(command)
+        return result.single()
+
+    def clean(self):
+        command = "MATCH (n)"\
+                  "DETACH DELETE n"
+        with self._driver.session() as session:
+            session.write_transaction(self._execute_command, command)
+
+    def insertSentimentals(self, listSentimentals):
+        for item in listSentimentals:
+            key = item
+            value = listSentimentals[key]
+            command = "CREATE (" + key + ":Sentimental {title:'" + key + "'})"
+            with self._driver.session() as session:
+                session.write_transaction(self._execute_command, command)
+
+    #def insertTweets(self, listTweets):
+        #for item in listTweets:
+            #neo4j.createTwitterAnalysis(item['sentimental'], item['location'])
+
+    #def insertRelations(self):
+
+
     def close(self):
         self._driver.close()
 
