@@ -52,8 +52,8 @@ tweetsSearch = twitter.searchItems(resultType, query, language, geocode, since, 
 for tweet in tweetsSearch:
     if tweet:
         #TO DO COMPREHEND
-        #KEY_NOT_WORKING comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
-        #KEY_NOT_WORKING sentiment = comprehendAnalysis['Sentiment']
+        comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
+        sentiment = comprehendAnalysis['Sentiment']
         sentiment = 'Neutral'
         tweetInsertion = {
             "idUser": tweet.id_str,
