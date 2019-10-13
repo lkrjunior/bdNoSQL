@@ -86,7 +86,7 @@ class Neo4jHandler(INeo4jHandler):
                     command = "MATCH(a:Sentimental),(b:City) " \
                               "WHERE a.title = '" + sentimentalName + "' " \
                               "AND b.title = '" + location + "' " \
-                              "CREATE(b)-[:HAS {percentage:['" + str(sentimentalValue) + "%']}]->(a)"
+                              "CREATE(b)-[:P_" + str(sentimentalValue) + " {percentage:['" + str(sentimentalValue) + "%']}]->(a)"
                     with self._driver.session() as session:
                         session.write_transaction(self._execute_command, command)
 
