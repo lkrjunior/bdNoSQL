@@ -65,14 +65,14 @@ class Neo4jHandler(INeo4jHandler):
 
     def insertLocations(self, listLocationsSentimentals):
         for item in listLocationsSentimentals:
-            location = self.__onlyCharacters(item['location'])
+            location = item['location']
             command = "CREATE (" + location + ":City {title:'" + location + "', country:'Brasil'})"
             with self._driver.session() as session:
                 session.write_transaction(self._execute_command, command)
 
     def insertRelations(self, listLocationsSentimentals):
         for item in listLocationsSentimentals:
-            location = self.__onlyCharacters(item['location'])
+            location = item['location']
             i = 0
             for sentimentalLoop in item['sentimentals']:
                 sentimentalName = sentimentalLoop

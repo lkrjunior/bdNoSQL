@@ -54,17 +54,17 @@ language = "pt"
 geocode = "-30.0277,-51.2287,5km"
 since = "2019-01-01"
 until = "2019-12-31"
-numberItems = 10
+numberItems = 5
 
 cidades = pd.DataFrame(data={
         'cidades':[
-                'Belo Horizonte - MG',
-                'Brasília - DF',
-                'Curitiba - PR',
-                'Fortaleza - CE',
-                'Porto Alegre - RS',
-                'Rio de Janeiro - RJ',
-                'São Paulo - SP'
+                'Belo_Horizonte_MG',
+                'Brasilia_DF',
+                'Curitiba_PR',
+                'Fortaleza_CE',
+                'Porto_Alegre_RS',
+                'Rio_de_Janeiro_RJ',
+                'Sao_Paulo_SP'
                 ],
         'geo':[
                 '-19.9208,-43.9378,10km',
@@ -73,7 +73,7 @@ cidades = pd.DataFrame(data={
                 '-3.7172,-38.5430,10km',
                 '-30.0330,-51.23,10km',
                 '-22.9028,-43.2075,10km',
-                '-23.5475,-46.6361'
+                '-23.5475,-46.6361,10km'
                 ]
         })
 
@@ -91,17 +91,16 @@ for index,row in cidades.iterrows():
                 "createAt": tweet.created_at.isoformat(),
                 "date": tweet.created_at.strftime("%d/%m/%Y"),
                 "screenName": tweet.user.screen_name,
-                "location": tweet.user.location,
+                "location": cidade,
                 "tweet": tweet.text,
                 "cidade":cidade,
                 "sentimental": sentiment
             }
             listTweets.append(tweetInsertion)
-            tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
-            if tweetInsertion['location'].strip():
-                tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
-                listTweets.append(tweetSentimental)
-                print("Tweet to send MongoDB: " + str(tweetSentimental))
+            #tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
+            tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
+            listTweets.append(tweetSentimental)
+            print("Tweet to send MongoDB: " + str(tweetSentimental))
 
 listRelations = listTweetsHandler.analyseDataSentimental(listTweets)
 listRelationsPercentage = listTweetsHandler.calculatePercentage(listRelations)
