@@ -29,13 +29,13 @@ class TwitterHandler(ITwitterHandler):
                                         until=until).items(numberItems)
         return tweets
 
-    def searchItems(self, resultType, query, language, since, until, numberItems):
-        tweets = self.twitterApi.Cursor(self.twitter.search,
-                                        result_type=resultType,
-                                        q=query,
-                                        lang=language,
-                                        since=since,
-                                        until=until).items(numberItems)
+#    def searchItems(self, resultType, query, language, since, until, numberItems):
+#        tweets = self.twitterApi.Cursor(self.twitter.search,
+#                                        result_type=resultType,
+#                                        q=query,
+#                                        lang=language,
+#                                        since=since,
+#                                        until=until).items(numberItems)
         return tweets
 
     def close(self):

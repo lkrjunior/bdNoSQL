@@ -1,5 +1,5 @@
 import configparser
-
+import pandas as pd
 from ListTweetsHandler import ListTweetsHandler
 from Neo4jHandler import Neo4jHandler
 from TwitterHandler import TwitterHandler
@@ -46,7 +46,7 @@ listSentimentals = {
     "MIXED": 0
 }
 
-listTweets = []
+
 
 resultType = "recent"
 query = "bolsonaro" + " -filter:retweets"
@@ -54,26 +54,54 @@ language = "pt"
 geocode = "-30.0277,-51.2287,5km"
 since = "2019-01-01"
 until = "2019-12-31"
-numberItems = 50
+numberItems = 10
 
-tweetsSearch = twitter.searchItems(resultType, query, language, since, until, numberItems)
-for tweet in tweetsSearch:
-    if tweet:
-        comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
-        sentiment = comprehendAnalysis['Sentiment']
-        tweetInsertion = {
-            "idUser": tweet.id_str,
-            "createAt": tweet.created_at,
-            "screenName": tweet.user.screen_name,
-            "location": tweet.user.location,
-            "tweet": tweet.text,
-            "sentimental": sentiment
-        }
-        tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
-        if tweetInsertion['location'].strip():
-            tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
-            listTweets.append(tweetSentimental)
-            print("Tweet to send MongoDB: " + str(tweetSentimental))
+cidades = pd.DataFrame(data={
+        'cidades':[
+                'Belo Horizonte - MG',
+                'Brasília - DF',
+                'Curitiba - PR',
+                'Fortaleza - CE',
+                'Porto Alegre - RS',
+                'Rio de Janeiro - RJ',
+                'São Paulo - SP'
+                ],
+        'geo':[
+                '-19.9208,-43.9378,10km',
+                '-15.7797,-47.9297,10km',
+                '-25.4278,-49.2731,10km',
+                '-3.7172,-38.5430,10km',
+                '-30.0330,-51.23,10km',
+                '-22.9028,-43.2075,10km',
+                '-23.5475,-46.6361'
+                ]
+        })
+
+listTweets = []
+for index,row in cidades.iterrows():
+    cidade = row['cidades']
+    geo = row['geo']
+    tweetsSearch = twitter.searchItems(resultType, query, language, geo, since, until, numberItems)
+    for tweet in tweetsSearch:
+        if tweet:
+            comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
+            sentiment = comprehendAnalysis['Sentiment']
+            tweetInsertion = {
+                "idUser": tweet.id_str,
+                "createAt": tweet.created_at.isoformat(),
+                "date": tweet.created_at.strftime("%d/%m/%Y"),
+                "screenName": tweet.user.screen_name,
+                "location": tweet.user.location,
+                "tweet": tweet.text,
+                "cidade":cidade,
+                "sentimental": sentiment
+            }
+            listTweets.append(tweetInsertion)
+            tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
+            if tweetInsertion['location'].strip():
+                tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
+                listTweets.append(tweetSentimental)
+                print("Tweet to send MongoDB: " + str(tweetSentimental))
 
 listRelations = listTweetsHandler.analyseDataSentimental(listTweets)
 listRelationsPercentage = listTweetsHandler.calculatePercentage(listRelations)
