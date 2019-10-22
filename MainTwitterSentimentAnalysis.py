@@ -18,19 +18,8 @@ consumerSecret = config.get(section, 'twitter.consumerSecret')
 accessToken = config.get(section, 'twitter.accessToken')
 accessTokenSecret = config.get(section, 'twitter.accessTokenSecret')
 
-section = 'Neo4jSection'
-connectionStringNeo4j = config.get(section, 'neo4j.connectionString')
-userNeo4j = config.get(section, 'neo4j.user')
-passwordNeo4j = config.get(section, 'neo4j.password')
-
-section = 'ComprehendSection'
-accessKeyComprehend = config.get(section, 'comprehend.accessKey')
-secretAccessKeyComprehend = config.get(section, 'comprehend.secretAccessKey')
-
 mongoDbConnection = MongoDbConnection(connectionString)
 twitter = TwitterHandler(consumerKey, consumerSecret, accessToken, accessTokenSecret)
-neo4j = Neo4jHandler(connectionStringNeo4j, userNeo4j, passwordNeo4j)
-comprehendHandler = ComprehendHandler(accessKeyComprehend, secretAccessKeyComprehend)
 listTweetsHandler = ListTweetsHandler()
 
 
@@ -39,32 +28,41 @@ for doc in deleteAllObjects:
     mongoDbConnection.deleteOne(doc)
 print("MongoDB clean successfuly")
 
-listSentimentals = {
-    "POSITIVE": 0,
-    "NEGATIVE": 0,
-    "NEUTRAL": 0,
-    "MIXED": 0
-}
-
-
-
 resultType = "recent"
 query = "bolsonaro" + " -filter:retweets"
 language = "pt"
 geocode = "-30.0277,-51.2287,5km"
 since = "2019-01-01"
 until = "2019-12-31"
-numberItems = 5
+numberItems = 100
 
 cidades = pd.DataFrame(data={
+        'pais':[
+                'Brasil',
+                'Brasil',
+                'Brasil',
+                'Brasil',
+                'Brasil',
+                'Brasil',
+                'Brasil'
+                ],
+        'uf':[
+                'MG',
+                'DF',
+                'PR',
+                'CE',
+                'RS',
+                'RJ',
+                'SP'
+                ],
         'cidades':[
-                'Belo_Horizonte_MG',
-                'Brasilia_DF',
-                'Curitiba_PR',
-                'Fortaleza_CE',
-                'Porto_Alegre_RS',
-                'Rio_de_Janeiro_RJ',
-                'Sao_Paulo_SP'
+                'Belo_Horizonte',
+                'Brasilia',
+                'Curitiba',
+                'Fortaleza',
+                'Porto_Alegre',
+                'Rio_de_Janeiro',
+                'Sao_Paulo'
                 ],
         'geo':[
                 '-19.9208,-43.9378,10km',
@@ -79,39 +77,24 @@ cidades = pd.DataFrame(data={
 
 listTweets = []
 for index,row in cidades.iterrows():
+    pais = row['pais']
+    uf = row['uf']
     cidade = row['cidades']
     geo = row['geo']
     tweetsSearch = twitter.searchItems(resultType, query, language, geo, since, until, numberItems)
     for tweet in tweetsSearch:
         if tweet:
-            comprehendAnalysis = comprehendHandler.detectSentiment(tweet.text)
-            sentiment = comprehendAnalysis['Sentiment']
             tweetInsertion = {
                 "idUser": tweet.id_str,
                 "createAt": tweet.created_at.isoformat(),
                 "date": tweet.created_at.strftime("%d/%m/%Y"),
                 "screenName": tweet.user.screen_name,
-                "location": cidade,
                 "tweet": tweet.text,
+                "pais" : pais, 
+                "uf": uf,
                 "cidade":cidade,
-                "sentimental": sentiment
             }
             listTweets.append(tweetInsertion)
-            #tweetInsertion['location'] = listTweetsHandler.onlyCharacters(tweetInsertion['location'])
-            tweetSentimental = {'location': tweetInsertion['location'], 'sentimental': tweetInsertion['sentimental']}
-            listTweets.append(tweetSentimental)
-            print("Tweet to send MongoDB: " + str(tweetSentimental))
-
-listRelations = listTweetsHandler.analyseDataSentimental(listTweets)
-listRelationsPercentage = listTweetsHandler.calculatePercentage(listRelations)
-
-neo4j.clean()
-neo4j.insertSentimentals(listSentimentals)
-neo4j.insertLocations(listRelationsPercentage)
-neo4j.insertRelations(listRelationsPercentage)
-print("Neo4J inserted successfuly!")
-
-
 
 if len(listTweets) > 0:
     mongoDbConnection.insertMany(listTweets)
@@ -119,5 +102,4 @@ if len(listTweets) > 0:
 
 mongoDbConnection.close()
 twitter.close()
-neo4j.close()
 comprehendHandler.close()
